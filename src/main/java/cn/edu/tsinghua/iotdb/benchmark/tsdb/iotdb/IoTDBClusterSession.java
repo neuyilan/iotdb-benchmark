@@ -26,7 +26,9 @@ import cn.edu.tsinghua.iotdb.benchmark.measurement.Status;
 import cn.edu.tsinghua.iotdb.benchmark.workload.ingestion.Batch;
 import cn.edu.tsinghua.iotdb.benchmark.workload.ingestion.Record;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.iotdb.rpc.IoTDBConnectionException;
 import org.apache.iotdb.rpc.StatementExecutionException;
 import org.apache.iotdb.session.Session;
@@ -42,6 +44,7 @@ public class IoTDBClusterSession extends IoTDB {
   private static final Logger LOGGER = LoggerFactory.getLogger(IoTDBClusterSession.class);
   private static Config config = ConfigDescriptor.getInstance().getConfig();
   private Session[] sessions;
+  private Map<String,Integer> sessionMapIndex ;
   private int currSession;
 
   public IoTDBClusterSession() {
@@ -55,9 +58,11 @@ public class IoTDBClusterSession extends IoTDB {
 
   private void createSessions() throws IoTDBConnectionException {
     sessions = new Session[config.CLUSTER_HOSTS.size()];
+      sessionMapIndex = new HashMap<>();
     for (int i = 0; i < sessions.length; i++) {
       String[] split = config.CLUSTER_HOSTS.get(i).split(":");
       sessions[i] = new Session(split[0], split[1], Constants.USER, Constants.PASSWD);
+      sessionMapIndex.put(split[0],i);
       if (config.ENABLE_THRIFT_COMPRESSION) {
         sessions[i].open(true);
       } else {
@@ -124,10 +129,22 @@ public class IoTDBClusterSession extends IoTDB {
       }
     }
     try {
-      sessions[currSession].insertTablet(tablet);
-      currSession = (currSession + 1) % sessions.length;
-      tablet.reset();
-      return new Status(true);
+      if(tablet.deviceId.contains("root.group_0")){
+          int tmpSessionId = sessionMapIndex.get("172.16.48.4");
+          sessions[tmpSessionId].insertTablet(tablet);
+          tablet.reset();
+          return new Status(true);
+      }else if(tablet.deviceId.contains("root.group_1")){
+          int tmpSessionId = sessionMapIndex.get("172.16.48.7");
+          sessions[tmpSessionId].insertTablet(tablet);
+          tablet.reset();
+          return new Status(true);
+      }else{
+          sessions[currSession].insertTablet(tablet);
+          currSession = (currSession + 1) % sessions.length;
+          tablet.reset();
+          return new Status(true);
+      }
     } catch (IoTDBConnectionException | StatementExecutionException e) {
       return new Status(false, 0, e, e.toString());
     }
