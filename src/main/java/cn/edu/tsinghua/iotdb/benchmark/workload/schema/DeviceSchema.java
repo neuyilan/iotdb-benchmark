@@ -13,7 +13,6 @@ public class DeviceSchema {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DeviceSchema.class);
   private static Config config = ConfigDescriptor.getInstance().getConfig();
-//  private static final String GROUP_NAME_PREFIX = "group_";
   private static final String DEVICE_NAME_PREFIX = "d_";
 
   // each device belongs to one group, i.e., database
