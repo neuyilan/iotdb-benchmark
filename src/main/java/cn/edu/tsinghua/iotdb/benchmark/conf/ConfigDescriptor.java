@@ -80,7 +80,7 @@ public class ConfigDescriptor {
 				config.INTERVAL = Integer.parseInt(properties.getProperty("INTERVAL", config.INTERVAL+""));
 				config.CLIENT_NUMBER = Integer.parseInt(properties.getProperty("CLIENT_NUMBER", config.CLIENT_NUMBER+""));
 				config.GROUP_NUMBER = Integer.parseInt(properties.getProperty("GROUP_NUMBER", config.GROUP_NUMBER+""));
-
+                config.GROUP_NAME_PREFIX = properties.getProperty("GROUP_NAME_PREFIX", config.GROUP_NAME_PREFIX+"");
 				config.DB_URL = properties.getProperty("DB_URL", "localhost");
 				config.DB_NAME = properties.getProperty("DB_NAME", "test");
 				config.DB_SWITCH = properties.getProperty("DB_SWITCH", Constants.DB_IOT);
