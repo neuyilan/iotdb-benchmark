@@ -44,7 +44,7 @@ public class IoTDB implements IDatabase {
   private static final String CREATE_SERIES_SQL =
       "CREATE TIMESERIES %s WITH DATATYPE=%s,ENCODING=%s,COMPRESSOR=%s";
   private static final String SET_STORAGE_GROUP_SQL = "SET STORAGE GROUP TO %s";
-  protected IoTDBConnection ioTDBConnection;
+  private IoTDBConnection ioTDBConnection;
   private static final String ALREADY_KEYWORD = "already exist";
   private ExecutorService service;
   private Future<?> future;
