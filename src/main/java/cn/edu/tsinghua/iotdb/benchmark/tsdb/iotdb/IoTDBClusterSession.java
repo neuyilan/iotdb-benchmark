@@ -23,6 +23,7 @@ import cn.edu.tsinghua.iotdb.benchmark.conf.Config;
 import cn.edu.tsinghua.iotdb.benchmark.conf.ConfigDescriptor;
 import cn.edu.tsinghua.iotdb.benchmark.conf.Constants;
 import cn.edu.tsinghua.iotdb.benchmark.measurement.Status;
+import cn.edu.tsinghua.iotdb.benchmark.tsdb.TsdbException;
 import cn.edu.tsinghua.iotdb.benchmark.workload.ingestion.Batch;
 import cn.edu.tsinghua.iotdb.benchmark.workload.ingestion.Record;
 import java.util.ArrayList;
@@ -157,5 +158,16 @@ public class IoTDBClusterSession extends IoTDB {
     currSession = (currSession + 1) % sessions.length;
     tablet.reset();
     return new Status(true);
+  }
+
+  @Override
+  public void close() throws TsdbException {
+    if (service != null) {
+      service.shutdownNow();
+    }
+    if (future != null) {
+      future.cancel(true);
+    }
+    super.close();
   }
 }
